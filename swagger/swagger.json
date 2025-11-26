@@ -1,0 +1,25 @@
+{
+    "swagger": "2.0",
+    "basePath": "/v1",
+    "paths": {},
+    "info": {
+        "title": "observatorios_mid",
+        "version": "1.0",
+        "description": "API para la gesti\u00f3n de l\u00f3gica de observatorios"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "tags": [],
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    }
+}
