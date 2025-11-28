@@ -1,2 +1,5 @@
-# Environments
+# Entorno virtual local
+/venv
+
+# Variables de entorno
 .env
