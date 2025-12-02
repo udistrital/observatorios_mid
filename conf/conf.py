@@ -1,7 +1,7 @@
 import os
 import sys
 
-variables = ['API_PORT', 'ENV']
+variables = ['API_PORT', 'ENV', 'GESTOR_DOCUMENTAL_URL']
 
 if os.environ['ENV'] == "dev":
     origins = ["*"]
