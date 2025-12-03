@@ -16,7 +16,7 @@ class GestorDocumentalService:
         endpoint = GestorDocumentalService.BASE_URL + "document/uploadAnyFormat"
 
         try:
-            response = requests.post(endpoint, json=payload, timeout=10)
+            response = requests.post(endpoint, json=payload, timeout=12)
 
             try:
                 return response.json()

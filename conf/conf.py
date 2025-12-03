@@ -1,7 +1,7 @@
 import os
 import sys
 
-variables = ['API_PORT', 'ENV', 'GESTOR_DOCUMENTAL_URL']
+variables = ['API_PORT', 'ENV', 'GESTOR_DOCUMENTAL_URL', 'ESCANEAR_ARCHIVO']
 
 if os.environ['ENV'] == "dev":
     origins = ["*"]
