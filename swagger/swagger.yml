@@ -1,11 +1,58 @@
 basePath: /v1
 consumes:
 - application/json
+definitions:
+  documentos_crud_metadata:
+    properties:
+      dato_a:
+        type: string
+      dato_b:
+        type: string
+      dato_n:
+        type: string
+    type: object
+  upload_resquest:
+    properties:
+      IdTipoDocumento:
+        type: integer
+      descripcion:
+        type: string
+      file:
+        type: string
+      metadatos:
+        $ref: '#/definitions/documentos_crud_metadata'
+      nombre:
+        type: string
+    type: object
 info:
   description: API para la gestión de lógica de observatorios
   title: observatorios_mid
   version: '1.0'
-paths: {}
+paths:
+  /documento:
+    post:
+      description: "Parameters\n----------\nrequest : json\n    Json Body {Document},\
+        \ Documento que será subido\n\nReturns\n-------\nResponse\n    Respuesta con\
+        \ cuerpo, status y en formato json"
+      operationId: post_doc_firma_electronica
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/upload_resquest'
+          type: array
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+        '500':
+          description: Nuxeo Error
+      summary: Permite subir un documento a nuxeo consumiendo a gestor documental
+      tags:
+      - observatorios_mid
 produces:
 - application/json
 responses:
@@ -14,4 +61,6 @@ responses:
   ParseError:
     description: When a mask can't be parsed
 swagger: '2.0'
-tags: []
+tags:
+- description: metodos para los procesos de observatorios
+  name: observatorios_mid
