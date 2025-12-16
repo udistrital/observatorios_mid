@@ -50,3 +50,15 @@ class docFirmaElectronica(Resource):
         """
         body=request.get_json()
         return controllerDocumento.postCargarDocumento(body)
+
+    @docDocumentacion.doc(
+        responses={200: 'Success', 400: 'Bad request', 500: 'Error interno'},
+        body=model_params['update_document_model']
+    )
+    @cross_origin(**api_cors_config)
+    def put(self):
+        """
+        Actualiza datos de un documento, reemplazando el archivo si ArchivoNuevo = true.
+        """
+        body = request.get_json()
+        return controllerDocumento.putActualizarDocumento(body)
