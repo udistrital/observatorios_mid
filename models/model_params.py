@@ -19,11 +19,10 @@ def define_parameters(api):
         'file': fields.String
     })]
 
-        # ---------- MODELO PARA EL PUT ----------
     archivo_model_put = api.model('archivo_put', {
         'IdTipoDocumento': fields.Integer,
         'nombre': fields.String,
-        'metadatos': fields.Raw,  # puede contener nombre archivo, hash, año
+        'metadatos': fields.Raw,
         'descripcion': fields.String,
         'file': fields.String
     })
