@@ -19,4 +19,20 @@ def define_parameters(api):
         'file': fields.String
     })]
 
+    archivo_model_put = api.model('archivo_put', {
+        'IdTipoDocumento': fields.Integer,
+        'nombre': fields.String,
+        'metadatos': fields.Raw,
+        'descripcion': fields.String,
+        'file': fields.String
+    })
+
+    update_document_model = api.model('update_document_request', {
+        'Archivo': fields.Nested(archivo_model_put, required=False),
+        'IdEstructuraArchivosDatos': fields.String(required=True),
+        'IdDocumento': fields.String(required=True),
+        'ArchivoNuevo': fields.Boolean(required=True),
+        'DatosArchivo': fields.Raw(required=True)
+    })
+
     return {k: v for k, v in vars().items() if not k.startswith('__')}

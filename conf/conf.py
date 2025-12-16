@@ -10,7 +10,7 @@ else:
 
 api_cors_config = {
     "origins": origins,
-    "methods": ["OPTIONS", "GET", "POST"],
+    "methods": ["OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE"],
     "allow_headers": ["Authorization", "Content-Type"]
 }
 
