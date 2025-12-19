@@ -1,4 +1,12 @@
+#!/bin/sh
 set -e
 set -u
 set -o pipefail
-python api.py
+
+: "${API_PORT:=8086}"
+
+exec gunicorn \
+  --workers 2 \
+  --threads 4 \
+  --bind 0.0.0.0:${API_PORT} \
+  api:app

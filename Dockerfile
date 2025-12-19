@@ -1,33 +1,29 @@
-FROM python:3.13.9
+FROM python:3.13-alpine
 
-RUN pip install awscli
+ENV PYTHONUNBUFFERED=1
 
-COPY entrypoint.sh entrypoint.sh
+RUN apk update && apk add --no-cache \
+    bash \
+    poppler-utils \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    openssl-dev
 
-RUN chmod +x entrypoint.sh
+RUN pip install --no-cache-dir awscli
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-ADD requirements.txt .
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install -r requirements.txt
-
-RUN apt-get update
-
-RUN apt-get install poppler-utils -y
-
-COPY conf/** /conf/
-
-COPY controllers/** /controllers/
-
-COPY models/** /models/
-
-COPY routers/** /routers/
-
-COPY services/** /services/
-
-COPY swagger/** /swagger/
-
-COPY utils/** /utils/
-
-ADD api.py .
+COPY conf/ /conf/
+COPY controllers/ /controllers/
+COPY models/ /models/
+COPY routers/ /routers/
+COPY services/ /services/
+COPY utils/ /utils/
+COPY api.py .
