@@ -16,8 +16,12 @@ WORKDIR /
 COPY pyproject.toml .
 
 RUN python - <<'EOF'
-import tomllib, subprocess
-deps = tomllib.load(open("pyproject.toml","rb"))["project"]["dependencies"]
+import tomllib
+import subprocess
+
+with open("pyproject.toml", "rb") as f:
+    deps = tomllib.load(f)["project"]["dependencies"]
+
 subprocess.check_call(["pip", "install", "--no-cache-dir", *deps])
 EOF
 
