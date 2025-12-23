@@ -1,8 +1,9 @@
 FROM python:3.13-alpine
 
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
-RUN apk update && apk add --no-cache \
+RUN apk add --no-cache \
     bash \
     poppler-utils \
     gcc \
@@ -10,15 +11,19 @@ RUN apk update && apk add --no-cache \
     libffi-dev \
     openssl-dev
 
-RUN pip install --no-cache-dir awscli
+WORKDIR /
+
+COPY pyproject.toml .
+
+RUN python - <<'EOF'
+import tomllib, subprocess
+deps = tomllib.load(open("pyproject.toml","rb"))["project"]["dependencies"]
+subprocess.check_call(["pip", "install", "--no-cache-dir", *deps])
+EOF
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
 ENTRYPOINT ["/entrypoint.sh"]
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
 COPY conf/ /conf/
 COPY controllers/ /controllers/
