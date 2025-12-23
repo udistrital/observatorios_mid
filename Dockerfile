@@ -1,33 +1,34 @@
-FROM python:3.13.9
+FROM python:3.13-alpine
 
-RUN pip install awscli
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
-COPY entrypoint.sh entrypoint.sh
+RUN apk add --no-cache \
+    bash \
+    poppler-utils \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    openssl-dev
 
-RUN chmod +x entrypoint.sh
+WORKDIR /
 
+COPY pyproject.toml .
+
+RUN python - <<'EOF'
+import tomllib, subprocess
+deps = tomllib.load(open("pyproject.toml","rb"))["project"]["dependencies"]
+subprocess.check_call(["pip", "install", "--no-cache-dir", *deps])
+EOF
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-ADD requirements.txt .
-
-RUN pip install -r requirements.txt
-
-RUN apt-get update
-
-RUN apt-get install poppler-utils -y
-
-COPY conf/** /conf/
-
-COPY controllers/** /controllers/
-
-COPY models/** /models/
-
-COPY routers/** /routers/
-
-COPY services/** /services/
-
-COPY swagger/** /swagger/
-
-COPY utils/** /utils/
-
-ADD api.py .
+COPY conf/ /conf/
+COPY controllers/ /controllers/
+COPY models/ /models/
+COPY routers/ /routers/
+COPY services/ /services/
+COPY utils/ /utils/
+COPY api.py .
