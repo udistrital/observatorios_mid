@@ -15,15 +15,9 @@ WORKDIR /
 
 COPY pyproject.toml .
 
-RUN python - <<'EOF'
-import tomllib
-import subprocess
-
-with open("pyproject.toml", "rb") as f:
-    deps = tomllib.load(f)["project"]["dependencies"]
-
-subprocess.check_call(["pip", "install", "--no-cache-dir", *deps])
-EOF
+RUN python -c "import tomllib,subprocess; \
+deps=tomllib.load(open('pyproject.toml','rb'))['project']['dependencies']; \
+subprocess.check_call(['pip','install','--no-cache-dir',*deps])"
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
