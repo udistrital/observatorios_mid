@@ -12,7 +12,7 @@ def addRutas(app_main):
 healthCheckController = Blueprint('healthCheckController', __name__, url_prefix='/')
 CORS(healthCheckController)
 
-@healthCheckController.route('/')
+@healthCheckController.route('/api/')
 def _():
     return healthCheck.healthCheck(docDocumentacion)
 
