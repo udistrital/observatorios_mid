@@ -5,25 +5,23 @@ from models.model_params import define_parameters
 from conf.conf import api_cors_config
 from flask_cors import cross_origin, CORS
 
-def addRutas(app_main):
-    app_main.register_blueprint(healthCheckController)
-    app_main.register_blueprint(docControl, url_prefix='/v1')
+health_bp = Blueprint('health_bp', __name__)
+CORS(health_bp)
 
-healthCheckController = Blueprint('healthCheckController', __name__, url_prefix='/')
-CORS(healthCheckController)
+@health_bp.route('/', methods=['GET'])
+def health():
+    return healthCheck.health_check()
 
-@healthCheckController.route('/api/')
-def _():
-    return healthCheck.healthCheck(docDocumentacion)
+# =========================
+# API /v1
+# =========================
 
 docControl=Blueprint('docControl', __name__)
 CORS(docControl)
-#----------INICIO SWAGGER --------------
+
 docDocumentacion = Api(docControl, version='1.0',title="observatorios_mid", description='API para la gestión de lógica de observatorios',doc='/swagger')
 docObservatorioscontroller = docDocumentacion.namespace("observatorios_mid",path="/", description="metodos para los procesos de observatorios")
-
 model_params=define_parameters(docDocumentacion)
-#----------FIN SWAGGER ----------------
 
 @docObservatorioscontroller.route('/documento')
 class docFirmaElectronica(Resource):
@@ -62,3 +60,7 @@ class docFirmaElectronica(Resource):
         """
         body = request.get_json()
         return controllerDocumento.putActualizarDocumento(body)
+
+def addRutas(app_main):
+    app_main.register_blueprint(health_bp)
+    app_main.register_blueprint(docControl, url_prefix='/v1')
