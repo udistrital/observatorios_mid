@@ -1,12 +1,13 @@
 import os
 import sys
+import re
 
 variables = ['API_PORT', 'ENV', 'GESTOR_DOCUMENTAL_URL', 'ESCANEAR_ARCHIVO']
 
 if os.environ['ENV'] == "dev":
     origins = ["*"]
 else:
-    origins = ["*"]
+    origins = [re.compile(r".*\.udistrital\.edu\.co$")]
 
 api_cors_config = {
     "origins": origins,
