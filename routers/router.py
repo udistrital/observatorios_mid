@@ -1,36 +1,39 @@
-from flask import  jsonify, Blueprint, request
-from flask_restx import Resource, Api
-from controllers import healthCheck, controllerDocumento
+from flask import Blueprint, request
+from flask_restx import Api, Resource
+from flask_cors import CORS, cross_origin
+from controllers import controllerDocumento, healthCheck
 from models.model_params import define_parameters
 from conf.conf import api_cors_config
-from flask_cors import cross_origin, CORS
 
-health_bp = Blueprint('health_bp', __name__)
-CORS(health_bp)
+root_bp = Blueprint("root_bp", __name__)
 
-@health_bp.route('/', methods=['GET'])
+@root_bp.route("/", methods=["GET"])
 def health():
     return healthCheck.health_check()
 
-# =========================
-# API /v1
-# =========================
+api_bp = Blueprint("api_bp", __name__)
+CORS(api_bp)
 
-docControl=Blueprint('docControl', __name__)
-CORS(docControl)
+docDocumentacion = Api(
+    api_bp,
+    version="1.0",
+    title="observatorios_mid",
+    description="API Observatorios MID",
+    doc="/swagger"
+)
 
-docDocumentacion = Api(docControl, version='1.0',title="observatorios_mid", description='API para la gestión de lógica de observatorios',doc='/swagger')
-docObservatorioscontroller = docDocumentacion.namespace("observatorios_mid",path="/", description="metodos para los procesos de observatorios")
-model_params=define_parameters(docDocumentacion)
+ns_v1 = docDocumentacion.namespace(
+    "v1",
+    path="/v1",
+    description="Servicios Observatorios"
+)
 
-@docObservatorioscontroller.route('/documento')
-class docFirmaElectronica(Resource):
-    @docDocumentacion.doc(responses={
-        200: 'Success',
-        500: 'Nuxeo Error',
-        400: 'Bad request'
-    }, body=model_params['upload_model'])
-    @docObservatorioscontroller.expect(model_params['request_parser'])
+model_params = define_parameters(docDocumentacion)
+
+@ns_v1.route("/documento")
+class DocumentoResource(Resource):
+
+    @ns_v1.expect(model_params["request_parser"])
     @cross_origin(**api_cors_config)
     def post(self):
         """
@@ -49,10 +52,6 @@ class docFirmaElectronica(Resource):
         body=request.get_json()
         return controllerDocumento.postCargarDocumento(body)
 
-    @docDocumentacion.doc(
-        responses={200: 'Success', 400: 'Bad request', 500: 'Error interno'},
-        body=model_params['update_document_model']
-    )
     @cross_origin(**api_cors_config)
     def put(self):
         """
@@ -61,6 +60,6 @@ class docFirmaElectronica(Resource):
         body = request.get_json()
         return controllerDocumento.putActualizarDocumento(body)
 
-def addRutas(app_main):
-    app_main.register_blueprint(health_bp)
-    app_main.register_blueprint(docControl, url_prefix='/v1')
+def addRutas(app):
+    app.register_blueprint(root_bp)
+    app.register_blueprint(api_bp)
