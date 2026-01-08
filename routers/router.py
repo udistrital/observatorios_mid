@@ -5,8 +5,13 @@ from controllers import controllerDocumento, healthCheck
 from models.model_params import define_parameters
 from conf.conf import api_cors_config
 
-api_bp = Blueprint("api_bp", __name__)
+api_bp = Blueprint("api_bp", __name__, url_prefix="/api")
 CORS(api_bp)
+
+@api_bp.route("", methods=["GET"])
+@api_bp.route("/", methods=["GET"])
+def api_health():
+    return healthCheck.health_check()
 
 docDocumentacion = Api(
     api_bp,
@@ -18,20 +23,13 @@ docDocumentacion = Api(
 
 ns_v1 = docDocumentacion.namespace(
     "v1",
-    path="/api",
+    path="/v1",
     description="Servicios Observatorios"
 )
 
 model_params = define_parameters(docDocumentacion)
 
-@ns_v1.route("/")
-class HealthCheck(Resource):
-
-    @cross_origin(**api_cors_config)
-    def get(self):
-        return healthCheck.health_check()
-
-@ns_v1.route("/v1/documento")
+@ns_v1.route("/documento")
 class DocumentoResource(Resource):
 
     @ns_v1.expect(model_params["request_parser"])
